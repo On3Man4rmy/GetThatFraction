@@ -1,6 +1,3 @@
-/**
- * @author Simon Stratemeier
- */
 public class FractionMatrix {
     Fraction[][] data;
 

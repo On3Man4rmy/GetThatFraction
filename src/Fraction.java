@@ -1,9 +1,7 @@
 import java.math.BigInteger;
 
-
 /**
  * Based on https://stackoverflow.com/q/474535
- * @author Simon Stratemeier
  */
 public class Fraction extends Number implements Comparable<Fraction>{
     private BigInteger numerator;

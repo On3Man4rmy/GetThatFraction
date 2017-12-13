@@ -1,5 +1,3 @@
-import java.util.Collections;
-
 public class StringUtil {
     public static String repeat(String text, int count) {
         StringBuilder s = new StringBuilder();
