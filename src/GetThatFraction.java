@@ -10,6 +10,7 @@ public class GetThatFraction {
         Player p1 = new Player(3, 3);
         Player p2 = new Player(5, 5);
         Player currentPlayer = p1;
+        Player otherPlayer = p2;
         draw(p1, p2, currentPlayer, mat);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -19,26 +20,37 @@ public class GetThatFraction {
         while (line.equalsIgnoreCase("quit") == false  && !end) {
             line = in.readLine();
 
-            if(line.equalsIgnoreCase("W") && currentPlayer.posX > 1) {
-                currentPlayer.posX -= 1;
+            if(line.equalsIgnoreCase("W")
+                    && currentPlayer.position.x > 1
+                    && isSamePosition(currentPlayer.peekDirection(Direction.UP), otherPlayer.position)) {
+                currentPlayer.moveDirection(Direction.UP);
             }
-            if(line.equalsIgnoreCase("S") && currentPlayer.posX < 8) {
-                currentPlayer.posX += 1;
+            if(line.equalsIgnoreCase("A")
+                    && currentPlayer.position.x < 8
+                    && isSamePosition(currentPlayer.peekDirection(Direction.LEFT), otherPlayer.position)) {
+                currentPlayer.moveDirection(Direction.LEFT);
             }
-            if(line.equalsIgnoreCase("A") && currentPlayer.posY > 1) {
-                currentPlayer.posY -= 1;
+            if(line.equalsIgnoreCase("S")
+                    && currentPlayer.position.y > 1
+                    && isSamePosition(currentPlayer.peekDirection(Direction.DOWN), otherPlayer.position)) {
+                currentPlayer.moveDirection(Direction.DOWN);
             }
-            if(line.equalsIgnoreCase("D") && currentPlayer.posY < 8) {
-                currentPlayer.posY += 1;
+            if(line.equalsIgnoreCase("D")
+                    && currentPlayer.position.y < 8
+                    && isSamePosition(currentPlayer.peekDirection(Direction.RIGHT), otherPlayer.position)) {
+                currentPlayer.moveDirection(Direction.RIGHT);
             }
 
-            currentPlayer.score = currentPlayer.score.add(mat.getValue(currentPlayer.posX, currentPlayer.posY));
-            mat.setValue(currentPlayer.posX, currentPlayer.posY, new Fraction(0, 1));
+
+            currentPlayer.score = currentPlayer.score.add(mat.getValue(currentPlayer.position.x, currentPlayer.position.y));
+            mat.setValue(currentPlayer.position.x, currentPlayer.position.y, new Fraction(0, 1));
 
             if(currentPlayer == p1) {
                 currentPlayer = p2;
+                otherPlayer = p1;
             } else {
                 currentPlayer = p1;
+                otherPlayer = p2;
             }
 
 
@@ -57,6 +69,10 @@ public class GetThatFraction {
         in.close();
     }
 
+    public static Boolean isSamePosition(Position p1, Position p2) {
+        return p1.equals(p2);
+    }
+
 
     public static void draw(Player p1, Player p2, Player currentPlayer, FractionMatrix mat) {
         StringBuilder s = new StringBuilder();
@@ -66,9 +82,9 @@ public class GetThatFraction {
 
         for(int x = 1; x <= 8; x++) {
             for(int y = 1; y <= 8; y++) {
-                if(p1.posX == x && p1.posY == y) {
+                if(p1.position.x == x && p1.position.y == y) {
                     s.append("  A   ");
-                } else if( p2.posX == x && p2.posY == y) {
+                } else if( p2.position.x == x && p2.position.y == y) {
                     s.append("  B   ");
                 } else {
                     int num = mat.getValue(x, y).getNumerator().intValue();

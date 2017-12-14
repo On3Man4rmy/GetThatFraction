@@ -1,10 +1,19 @@
+import javafx.geometry.Pos;
+
 public class Player {
     Fraction score = new Fraction(0,1);
-    int posX = 0;
-    int posY = 0;
+    Position position;
 
     Player (int posX, int posY) {
-        this.posX = posX;
-        this.posY = posY;
+        this.position = new Position(posX, posY);
+    }
+
+    public Player moveDirection(Direction direction) {
+        position.moveDirection(direction);
+        return this;
+    }
+
+    public Position peekDirection(Direction direction) {
+        return position.peekDirection(direction);
     }
 }
