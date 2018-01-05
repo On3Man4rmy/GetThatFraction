@@ -6,7 +6,7 @@ import java.util.Random;
 public class GetThatFraction {
     public static void main(String[] args) throws IOException {
         Boolean end = false;
-        FractionMatrix mat = initMatrix();
+        Matrix<Fraction> mat = initMatrix();
         Player p1 = new Player(3, 3);
         Player p2 = new Player(5, 5);
         Player currentPlayer = p1;
@@ -21,23 +21,23 @@ public class GetThatFraction {
             line = in.readLine();
 
             if(line.equalsIgnoreCase("W")
-                    && currentPlayer.position.x > 1
-                    && isSamePosition(currentPlayer.peekDirection(Direction.UP), otherPlayer.position)) {
+                    && currentPlayer.position.y > 1
+                    && !isSamePosition(currentPlayer.peekDirection(Direction.UP), otherPlayer.position)) {
                 currentPlayer.moveDirection(Direction.UP);
             }
             if(line.equalsIgnoreCase("A")
-                    && currentPlayer.position.x < 8
-                    && isSamePosition(currentPlayer.peekDirection(Direction.LEFT), otherPlayer.position)) {
+                    && currentPlayer.position.x > 1
+                    && !isSamePosition(currentPlayer.peekDirection(Direction.LEFT), otherPlayer.position)) {
                 currentPlayer.moveDirection(Direction.LEFT);
             }
             if(line.equalsIgnoreCase("S")
-                    && currentPlayer.position.y > 1
-                    && isSamePosition(currentPlayer.peekDirection(Direction.DOWN), otherPlayer.position)) {
+                    && currentPlayer.position.y < 8
+                    && !isSamePosition(currentPlayer.peekDirection(Direction.DOWN), otherPlayer.position)) {
                 currentPlayer.moveDirection(Direction.DOWN);
             }
             if(line.equalsIgnoreCase("D")
-                    && currentPlayer.position.y < 8
-                    && isSamePosition(currentPlayer.peekDirection(Direction.RIGHT), otherPlayer.position)) {
+                    && currentPlayer.position.x < 8
+                    && !isSamePosition(currentPlayer.peekDirection(Direction.RIGHT), otherPlayer.position)) {
                 currentPlayer.moveDirection(Direction.RIGHT);
             }
 
@@ -57,11 +57,11 @@ public class GetThatFraction {
             draw(p1, p2, currentPlayer, mat);
 
             if(p1.score.intValue() >= 80) {
-                System.out.println("Player 1 wins!");
+                System.out.println("Weiß wins!");
                 end = true;
             }
             if(p2.score.intValue() >= 80) {
-                System.out.println("Player 2 wins!");
+                System.out.println("Schwarz wins!");
                 end = true;
             }
         }
@@ -74,18 +74,18 @@ public class GetThatFraction {
     }
 
 
-    public static void draw(Player p1, Player p2, Player currentPlayer, FractionMatrix mat) {
+    public static void draw(Player p1, Player p2, Player currentPlayer, Matrix<Fraction> mat) {
         StringBuilder s = new StringBuilder();
-        s.append("PlayerA Score: " + p1.score.floatValue()).append("\n");
-        s.append("PlayerB Score: " + p2.score.floatValue()).append("\n");
-        s.append("Current Player: " + (currentPlayer == p1 ? "PlayerA" : "PlayerB")).append("\n\n");
+        s.append("Weiß Score: " + p1.score.floatValue()).append("\n");
+        s.append("Schwarz Score: " + p2.score.floatValue()).append("\n");
+        s.append("Current Player: " + (currentPlayer == p1 ? "Weiß" : "Schwarz")).append("\n\n");
 
-        for(int x = 1; x <= 8; x++) {
-            for(int y = 1; y <= 8; y++) {
+        for(int y = 1; y <= 8; y++) {
+            for(int x = 1; x <= 8; x++) {
                 if(p1.position.x == x && p1.position.y == y) {
-                    s.append("  A   ");
+                    s.append("  W   ");
                 } else if( p2.position.x == x && p2.position.y == y) {
-                    s.append("  B   ");
+                    s.append("  S   ");
                 } else {
                     int num = mat.getValue(x, y).getNumerator().intValue();
                     int det = mat.getValue(x, y).getDenominator().intValue();
@@ -108,24 +108,31 @@ public class GetThatFraction {
         System.out.println(s.toString());
     }
 
-    public static FractionMatrix initMatrix() {
-        FractionMatrix mat = new FractionMatrix(8, 8);
+    public static Fraction getGameFraction() {
+        int minNumerator, maxNumerator, randomNumerator;
+        int minDenominator, maxDenominator, randomDenominator;
 
-        int min = 1;
-        int max = 99;
-        for(int x = 1; x <= 8; x++) {
-            for(int y = 1; y <= 8; y++) {
-                Random random = new Random();
+        minNumerator = 10;
+        maxNumerator = 99;
+        randomNumerator = randomRange(minNumerator, maxNumerator);
 
-                int d = random.nextInt(max - min + 1) + min;
-                int maxN = ((d * 10) > max) ? max : d * 10;
-                int minN = d;
-                int n = random.nextInt(maxN - minN + 1) + minN;
+        minDenominator = randomNumerator / 10;
+        maxDenominator = randomNumerator;
+        randomDenominator = randomRange(minDenominator, maxDenominator);
 
-                mat.setValue(x, y, new Fraction(n, d));
-            }
-        }
+        return new Fraction(randomNumerator, randomDenominator);
+    }
 
+    // https://stackoverflow.com/a/363732
+    public static int randomRange(int min, int max) {
+        Random ran = new Random();
+        return  min + ran.nextInt(max - min+ 1);
+    }
+
+    public static Matrix<Fraction> initMatrix() {
+        Matrix<Fraction> mat = new Matrix<Fraction>(8, 8, Fraction.DEFAULT);
+        mat.map(GetThatFraction::getGameFraction);
+        System.out.println(mat.reduce((acc, curr) -> acc.add(curr), Fraction.DEFAULT).intValue());
         return mat;
     }
 }

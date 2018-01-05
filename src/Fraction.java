@@ -115,6 +115,9 @@ public class Fraction extends Number implements Comparable<Fraction>{
     public long longValue() {
         return (long) this.doubleValue();
     }
+
+    public static final Fraction ZERO = new Fraction(0,1);
+    public static final Fraction DEFAULT = new Fraction(0,1);
 }
 
 class DivisionByZeroException extends Error {

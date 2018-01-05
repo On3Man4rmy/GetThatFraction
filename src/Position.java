@@ -11,16 +11,16 @@ public class Position {
     public Position moveDirection(Direction direction) {
         switch (direction) {
             case UP:
-                x--;
-                break;
-            case LEFT:
                 y--;
                 break;
+            case LEFT:
+                x--;
+                break;
             case RIGHT:
-                y++;
+                x++;
                 break;
             case DOWN:
-                x++;
+                y++;
                 break;
         }
 
