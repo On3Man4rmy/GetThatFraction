@@ -1,4 +1,4 @@
-public class Position {
+public class Position implements Comparable<Position> {
     int x;
     int y;
 
@@ -6,7 +6,6 @@ public class Position {
         this.x = x;
         this.y = y;
     }
-
 
     public Position moveDirection(Direction direction) {
         switch (direction) {
@@ -27,6 +26,18 @@ public class Position {
         return this;
     }
 
+    public Position add(Position pos) {
+        return new Position(this.x + pos.x, this.y + pos.y);
+    }
+
+    public Position subtract(Position pos) {
+        return new Position(this.x - pos.x, this.y - pos.y);
+    }
+
+    public int area() {
+        return x * y;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return x == ((Position)obj).x && y == ((Position)obj).y;
@@ -34,5 +45,23 @@ public class Position {
 
     public Position peekDirection(Direction direction) {
         return new Position(x, y).moveDirection(direction);
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        int result = 0;
+        if(y > o.y) {
+            result = 1;
+        } else if (y == o.y) {
+            if(x > o.x) {
+                result = 1;
+            } else if (x < o.x) {
+                result = -1;
+            }
+        } else {
+            result = -1;
+        }
+
+        return result;
     }
 }
