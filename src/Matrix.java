@@ -1,34 +1,11 @@
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.IntBinaryOperator;
-import java.util.function.Supplier;
+import java.lang.reflect.Array;
+import java.util.function.*;
 
 public class Matrix<T> {
     T[][] data;
 
     @Override
     public String toString() {
-        /*
-        StringBuilder s = new StringBuilder();
-
-        for(T[] dataX : data) {
-            for (T dataY : dataX) {
-                int num = dataY.getNumerator().intValue();
-                int det = dataY.getDenominator().intValue();
-                int numDigits = MathUtil.digits(num);
-                int detDigits = MathUtil.digits(det);
-                int maxDigits = 2;
-                s.append(num)
-                        .append("/")
-                        .append(det)
-                        .append(StringUtil.repeat(" ", maxDigits * 2 - numDigits - detDigits))
-                        .append(" ");
-            }
-            s.append("\n");
-        }
-
-        return s.toString();
-        */
         StringBuilder s = new StringBuilder();
 
         for(T[] dataX : data) {
@@ -51,11 +28,19 @@ public class Matrix<T> {
         return data[i-1][j-1];
     }
 
+    public int getHeight() {
+        return Array.getLength(data);
+    }
+
+    public int getWidth() {
+        return (getHeight() > 0) ? Array.getLength(data[0]) : 0;
+    }
+
 
 
     public Matrix<T> map(Supplier<T> func) {
-        for(int x = 1; x <= 8; x++) {
-            for(int y = 1; y <= 8; y++) {
+        for(int x = 1; x <= getWidth(); x++) {
+            for(int y = 1; y <= getHeight(); y++) {
                 setValue(x, y, func.get());
             }
         }
@@ -63,11 +48,13 @@ public class Matrix<T> {
         return this;
     }
 
+
+
     public T reduce(BiFunction<T, T, T> func, T initalValue) {
         T accumulator = initalValue;
 
-        for(int x = 1; x <= 8; x++) {
-            for(int y = 1; y <= 8; y++) {
+        for(int x = 1; x <= getWidth(); x++) {
+            for(int y = 1; y <= getWidth(); y++) {
                 accumulator = func.apply(accumulator, getValue(x,y));
             }
         }

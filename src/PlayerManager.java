@@ -1,28 +1,34 @@
 import javafx.geometry.Pos;
+import java.lang.Math.*;
 
 import java.util.*;
 
-public class PlayerFactory {
+public class PlayerManager {
     private int startX, startY, endX, endY;
     private List<Position> usedPositions;
+    private SelectorList<Player> players;
 
-    public Player createPlayer() {
+    public Player createPlayer(String name, String shortName) {
         Position randomPosition = randomArea(new Position(startX, startY), new Position(endX, endY), usedPositions);
+        Player player =  new Player(randomPosition, name, shortName);
         usedPositions.add(randomPosition);
-        return new Player(randomPosition);
+        players.addNodeAtEnd(player);
+
+        return player;
     }
 
-    public PlayerFactory(int startX, int startY, int endX, int endY) {
+    public PlayerManager(int startX, int startY, int endX, int endY) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
 
-        usedPositions = new ArrayList<Position>();
+        players = new SelectorList<>();
+        usedPositions = new ArrayList<>();
     }
 
     // https://stackoverflow.com/a/47232576
-    public static Position randomArea(Position topLeft, Position bottomRight, List<Position> excepts) {
+    public Position randomArea(Position topLeft, Position bottomRight, List<Position> excepts) {
         Random ran = new Random();
         Position origin = topLeft;
         Position translatedBottomRight = bottomRight.subtract(origin);
@@ -54,15 +60,33 @@ public class PlayerFactory {
         return new Position(x, y);
     }
 
-    public static int getIndex(int width, Position pos) {
+    public Player getCurrentPlayer() {
+        Node curNode = players.getCurrentNode();
+        if(curNode != null) {
+            return (Player)curNode.data;
+        }
+
+        return null;
+    }
+
+    public Player selectNextPlayer() {
+        Node nextNode = players.selectNextNode();
+        if(nextNode != null) {
+            return (Player)nextNode.data;
+        }
+
+        return null;
+    }
+
+    public int getIndex(int width, Position pos) {
         return (width * (pos.y - 1) + pos.x) - 1 ;
     }
 
-    public static int getXFromIndex(int width, int index) {
+    public int getXFromIndex(int width, int index) {
         return (index % width) + 1;
     }
 
-    public static int getYFromIndex(int width, int index) {
+    public int getYFromIndex(int width, int index) {
         return (int)((index + width) / width);
     }
 }
