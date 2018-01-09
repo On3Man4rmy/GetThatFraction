@@ -3,43 +3,46 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+
+/**
+ * MAX Game
+ * @author Melanie Krugel 198991, Tobias Fetzer 198318, Simon Stratemeier 199067
+ * @version 2.0 08.01.2018
+ */
 public class MAX {
+    // Colors
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+
+    // Variables for playing ground properties
     public static final int END_X = 8;
     public static final int END_Y = 8;
     public static final int START_X = 1;
     public static final int START_Y = 1;
-    public static final int SCORE_TARGET = 80;
-    private static Fraction sum=new Fraction(0,1);
-    private static Fraction eighty=new Fraction(80,1);
+    public static final Fraction SCORE_TARGET = new Fraction(80, 1);
+    public static Fraction sum = new Fraction(0,1);
+
+
+
     public static void main(String[] args) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        String line;
         Boolean end = false;
         Matrix<Fraction> mat = initMatrix();
-        /*
-        PlayerManager pFactory = new PlayerManager(START_X, START_Y, END_X, END_Y);
-        Player p1 = pFactory.createPlayer("Weiß", "W");
-        Player p2 = pFactory.createPlayer("Schwarz", "S");
-        ArrayList<Player> players = new ArrayList<>();
-        players.add(pFactory.createPlayer("Weiß", "W"));
-        players.add(pFactory.createPlayer("Schwarz", "S"));
-        /*
-
-
-         */
-        Player p1 = new Player(new Position(4, 4), "Schwarz", "S");
-        Player p2 = new Player(new Position(5, 5), "Weiß", "W");
-
+        Player p1 = new Player(new Position(4, 4), "red", ANSI_RED + "R" + ANSI_RESET);
+        Player p2 = new Player(new Position(5, 5), "green", ANSI_GREEN + "G" + ANSI_RESET);
         Player currentPlayer = p1;
         Player otherPlayer = p2;
+
+        // Inital draw
         Board.draw(p1, p2, currentPlayer, mat);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        String line = "";
         while (!end) {
+            // Keyboard command
             line = in.readLine();
 
-
             while (!line.equalsIgnoreCase("quit")) {
-
                 if (line.equalsIgnoreCase("W")
                         && currentPlayer.position.y > START_Y
                         && !isSamePosition(currentPlayer.peekDirection(Direction.UP), otherPlayer)) {
@@ -65,15 +68,20 @@ public class MAX {
                     break;
                 }
 
+                // Border reached or unknown command
                 System.out.println("Nicht möglich! Neu eingeben");
+                // Retry input
                 line = in.readLine();
-
             }
 
+            // Update player score
             currentPlayer.score = currentPlayer.score.add(mat.getValue(currentPlayer.position.x, currentPlayer.position.y));
-            sum=sum.subtract(mat.getValue(currentPlayer.position.x, currentPlayer.position.y));
+            // Update score of remaining playing field points
+            sum = sum.subtract(mat.getValue(currentPlayer.position.x, currentPlayer.position.y));
+            // When player arrives field set field value to 0
             mat.setValue(currentPlayer.position.x, currentPlayer.position.y, Fraction.ZERO);
 
+            // Rotate current player
             if (currentPlayer == p1) {
                 currentPlayer = p2;
                 otherPlayer = p1;
@@ -82,18 +90,19 @@ public class MAX {
                 otherPlayer = p2;
             }
 
-
+            // Update console output
             Board.draw(p1, p2, currentPlayer, mat);
 
-            if (p1.score.intValue() >= SCORE_TARGET) {
-                System.out.println(p1.getName() + " has reached 80 points. You need " +eighty.subtract(p2.score).doubleValue()+" Points to tie the game"  );
+            // Announce winner
+            if (p1.score.compareTo(SCORE_TARGET) >= 1) {
+                System.out.println(p1.getName() + " wins!" );
                 end = true;
             }
-            if (p2.score.intValue() >= SCORE_TARGET) {
+            if (p2.score.compareTo(SCORE_TARGET) >= 1) {
                 System.out.println(p2.getName() + " wins!");
                 end = true;
             }
-
+            // Announce tie
             if(sum.equals(Fraction.ZERO)){
                 int i=p1.score.compareTo(p2.score);
                 if(i==0) System.out.println("Unentschieden");
@@ -104,23 +113,18 @@ public class MAX {
             }
 
         }
+
+        // Close buffered reader
         in.close();
-
-    }
-    public static Boolean isPlayerCollision(Player currentPlayer, ArrayList<Player> allPlyers) {
-        for(Player p : allPlyers) {
-            if(currentPlayer != p && isSamePosition(currentPlayer, p))  {
-                return true;
-            }
-        }
-
-        return false;
     }
 
+
+    // Check if players have the same position
     public static Boolean isSamePosition(Player p1, Player p2) {
         return p1.position.equals(p2.position);
     }
 
+    // Create Fraction with random (more or less) value
     public static Fraction getGameFraction() {
         int minNumerator, maxNumerator, randomNumerator;
         int minDenominator, maxDenominator, randomDenominator;
@@ -139,7 +143,7 @@ public class MAX {
     }
 
 
-
+    // create Matrix representing the playing field
     public static Matrix<Fraction> initMatrix() {
         int rows = END_X - START_X + 1;
         int columns = END_Y - START_Y + 1;

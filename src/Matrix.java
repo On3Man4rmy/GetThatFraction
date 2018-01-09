@@ -1,9 +1,25 @@
 import java.lang.reflect.Array;
 import java.util.function.*;
 
+/**
+ * Matrix to represent playing field filled with fractions
+ * @author Melanie Krugel 198991, Tobias Fetzer 198318, Simon Stratemeier 199067
+ * @version 2.0 08.01.2018
+ */
 public class Matrix<T> {
     T[][] data;
 
+
+    //Konstruktor
+    public Matrix(int rows, int columns, T initalFieldValue) {
+        data =  (T[][])new Object[rows][columns];
+
+        for(int i = 1; i <= data.length; i++) {
+            for(int y = 1; y <= data[i-1].length; y++) {
+                setValue(i, y, initalFieldValue);
+            }
+        }
+    }
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -37,7 +53,7 @@ public class Matrix<T> {
     }
 
 
-
+// plotter
     public Matrix<T> map(Supplier<T> func) {
         for(int x = 1; x <= getWidth(); x++) {
             for(int y = 1; y <= getHeight(); y++) {
@@ -49,7 +65,7 @@ public class Matrix<T> {
     }
 
 
-
+// sum of elements
     public T reduce(BiFunction<T, T, T> func, T initalValue) {
         T accumulator = initalValue;
 
@@ -62,13 +78,5 @@ public class Matrix<T> {
         return accumulator;
     }
 
-    public Matrix(int rows, int columns, T initalFieldValue) {
-        data =  (T[][])new Object[rows][columns];
 
-        for(int i = 1; i <= data.length; i++) {
-            for(int y = 1; y <= data[i-1].length; y++) {
-                setValue(i, y, initalFieldValue);
-            }
-        }
-    }
 }

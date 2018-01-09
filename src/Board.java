@@ -1,7 +1,10 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-
+/**
+ * Output class
+ * @author Melanie Krugel 198991, Tobias Fetzer 198318, Simon Stratemeier 199067
+ * @version 2.0 08.01.2018
+ */
 public class Board {
+
     public static void draw(Player p1, Player p2, Player currentPlayer, Matrix<Fraction> mat) {
         StringBuilder s = new StringBuilder();
         s.append(String.join(
