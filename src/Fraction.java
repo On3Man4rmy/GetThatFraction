@@ -1,12 +1,15 @@
 import java.math.BigInteger;
 
 /**
- * Based on https://stackoverflow.com/q/474535
+ * @author Melanie Krugel 198991, Tobias Fetzer 198318, Simon Stratemeier 199067
+ * @version 2.0 08.01.2018
  */
 public class Fraction extends Number implements Comparable<Fraction>{
+    public static final Fraction ZERO = new Fraction(0,1);
+    public static final Fraction DEFAULT = new Fraction(0,1);
+
     private BigInteger numerator;
     private BigInteger denominator;
-
 
     public Fraction(BigInteger numerator, BigInteger denominator)  {
         super();
@@ -31,7 +34,6 @@ public class Fraction extends Number implements Comparable<Fraction>{
                 BigInteger.valueOf(denominator)
         );
     }
-
 
     public Fraction(BigInteger numerator) {
         this.numerator = numerator;
@@ -92,9 +94,7 @@ public class Fraction extends Number implements Comparable<Fraction>{
         return t.compareTo(f);
     }
 
-
     public boolean equals(Object obj) {
-//        IO.writeln("compare value: " + compareTo((Fraction)obj));
         return compareTo((Fraction)obj) == 0;
     }
 
@@ -115,9 +115,6 @@ public class Fraction extends Number implements Comparable<Fraction>{
     public long longValue() {
         return (long) this.doubleValue();
     }
-
-    public static final Fraction ZERO = new Fraction(0,1);
-    public static final Fraction DEFAULT = new Fraction(0,1);
 }
 
 class DivisionByZeroException extends Error {
