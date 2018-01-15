@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.function.*;
 
 /**
@@ -13,13 +14,9 @@ public class Matrix<T> {
     //Konstruktor
     public Matrix(int rows, int columns, T initalFieldValue) {
         data =  (T[][])new Object[rows][columns];
-
-        for(int i = 1; i <= data.length; i++) {
-            for(int y = 1; y <= data[i-1].length; y++) {
-                setValue(i, y, initalFieldValue);
-            }
-        }
+        map(() -> initalFieldValue);
     }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -36,8 +33,8 @@ public class Matrix<T> {
         return s.toString();
     }
 
-    void setValue(int i, int j, T x) {
-        data[i - 1][j - 1] = x;
+    T setValue(int i, int j, T x) {
+        return data[i - 1][j - 1] = x;
     }
 
     public T getValue(int i, int j) {
@@ -53,19 +50,38 @@ public class Matrix<T> {
     }
 
 
-// plotter
-    public Matrix<T> map(Supplier<T> func) {
+    // plotter
+    public void forEach(BiFunction<Integer, Integer, T> func) {
         for(int x = 1; x <= getWidth(); x++) {
-            for(int y = 1; y <= getHeight(); y++) {
-                setValue(x, y, func.get());
+            for (int y = 1; y <= getHeight(); y++) {
+                func.apply(x,y);
             }
         }
+    }
+
+    public void forEach(Consumer<T> func) {
+        for(int x = 1; x <= getWidth(); x++) {
+            for (int y = 1; y <= getHeight(); y++) {
+                func.accept(getValue(x,y));
+            }
+        }
+    }
+
+
+    // plotter
+    public Matrix<T> map(Supplier<T> func) {
+        return map(x -> func.get());
+    }
+
+    // plotter
+    public Matrix<T> map(Function<T, T> func) {
+        forEach((Integer x, Integer y)
+                -> setValue(x, y, func.apply(getValue(x,y))));
 
         return this;
     }
 
-
-// sum of elements
+    // sum of elements
     public T reduce(BiFunction<T, T, T> func, T initalValue) {
         T accumulator = initalValue;
 

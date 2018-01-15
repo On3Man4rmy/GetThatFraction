@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @version 2.0 08.01.2018
  */
 public class MAX {
-    // Colors
+    // String colors
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -23,26 +23,26 @@ public class MAX {
     public static final Fraction SCORE_TARGET = new Fraction(80, 1);
     public static Fraction sum = new Fraction(0,1);
 
-
-
     public static void main(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String line;
         Boolean end = false;
         Matrix<Fraction> mat = initMatrix();
-        Player p1 = new Player(new Position(4, 4), "red", ANSI_RED + "R" + ANSI_RESET);
-        Player p2 = new Player(new Position(5, 5), "green", ANSI_GREEN + "G" + ANSI_RESET);
-        Player currentPlayer = p1;
-        Player otherPlayer = p2;
+        Player player1 = new Player(new Position(4, 4), "red", ANSI_RED + "R" + ANSI_RESET);
+        Player player2 = new Player(new Position(5, 5), "green", ANSI_GREEN + "G" + ANSI_RESET);
+        Player currentPlayer = player1;
+        Player otherPlayer = player2;
 
         // Inital draw
-        Board.draw(p1, p2, currentPlayer, mat);
+        Board.draw(player1, player2, currentPlayer, mat);
 
         while (!end) {
             // Keyboard command
             line = in.readLine();
 
+            // Loop for next round or quit
             while (!line.equalsIgnoreCase("quit")) {
+                // Move current player if movement in given direction is allowed
                 if (line.equalsIgnoreCase("W")
                         && currentPlayer.position.y > START_Y
                         && !isSamePosition(currentPlayer.peekDirection(Direction.UP), otherPlayer)) {
@@ -82,32 +82,32 @@ public class MAX {
             mat.setValue(currentPlayer.position.x, currentPlayer.position.y, Fraction.ZERO);
 
             // Rotate current player
-            if (currentPlayer == p1) {
-                currentPlayer = p2;
-                otherPlayer = p1;
+            if (currentPlayer == player1) {
+                currentPlayer = player2;
+                otherPlayer = player1;
             } else {
-                currentPlayer = p1;
-                otherPlayer = p2;
+                currentPlayer = player1;
+                otherPlayer = player2;
             }
 
             // Update console output
-            Board.draw(p1, p2, currentPlayer, mat);
+            Board.draw(player1, player2, currentPlayer, mat);
 
             // Announce winner
-            if (p1.score.compareTo(SCORE_TARGET) >= 1) {
-                System.out.println(p1.getName() + " wins!" );
+            if (player1.score.compareTo(SCORE_TARGET) >= 1) {
+                System.out.println(player1.getName() + " wins!" );
                 end = true;
             }
-            if (p2.score.compareTo(SCORE_TARGET) >= 1) {
-                System.out.println(p2.getName() + " wins!");
+            if (player2.score.compareTo(SCORE_TARGET) >= 1) {
+                System.out.println(player2.getName() + " wins!");
                 end = true;
             }
             // Announce tie
             if(sum.equals(Fraction.ZERO)){
-                int i=p1.score.compareTo(p2.score);
+                int i=player1.score.compareTo(player2.score);
                 if(i==0) System.out.println("Unentschieden");
                 else {
-                    System.out.println(i == 1 ? p1.getName() + " wins!" : p2.getName() + " wins!");
+                    System.out.println(i == 1 ? player1.getName() + " wins!" : player2.getName() + " wins!");
                 }
                 end=true;
             }
@@ -117,7 +117,6 @@ public class MAX {
         // Close buffered reader
         in.close();
     }
-
 
     // Check if players have the same position
     public static Boolean isSamePosition(Player p1, Player p2) {
@@ -151,7 +150,9 @@ public class MAX {
         Matrix<Fraction> mat = new Matrix<>(rows, columns, Fraction.DEFAULT);
 
         mat.map(MAX::getGameFraction);
-        System.out.println(mat.reduce((acc, curr) -> acc.add(curr), Fraction.DEFAULT).intValue());
+
+        // Output sum for debugging purposes
+        //System.out.println(mat.reduce((acc, curr) -> acc.add(curr), Fraction.DEFAULT).intValue());
         return mat;
     }
 }

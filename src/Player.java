@@ -39,4 +39,9 @@ public class Player {
     public Player peekDirection(Direction direction) {
         return new Player(position.peekDirection(direction));
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

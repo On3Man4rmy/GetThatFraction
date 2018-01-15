@@ -7,6 +7,8 @@ public class Board {
 
     public static void draw(Player p1, Player p2, Player currentPlayer, Matrix<Fraction> mat) {
         StringBuilder s = new StringBuilder();
+
+        // Create Label for player score and current player
         s.append(String.join(
                 "\n",
                 playerScore(p1),
@@ -15,20 +17,31 @@ public class Board {
                 "\n"
         ));
 
+        // Draw playboard
         for(int y = MAX.START_Y; y <= MAX.END_Y; y++) {
             for(int x = MAX.START_X; x <= MAX.END_X; x++) {
+
+                // Player1 is at this board position
                 if(p1.position.x == x && p1.position.y == y) {
                     s.append("  " + p1.getShortName() + "   ");
+
+                // Player2 is at this board position
                 } else if( p2.position.x == x && p2.position.y == y) {
                     s.append("  " +  p2.getShortName() + "   ");
+
+                // Draw Fraction
                 } else {
                     int num = mat.getValue(x, y).getNumerator().intValue();
                     int det = mat.getValue(x, y).getDenominator().intValue();
                     int numDigits = MathUtil.digits(num);
                     int detDigits = MathUtil.digits(det);
                     int maxDigits = 2;
+
+                    // Fraction is a Integer
                     if(det == 1) {
                         s.append("  " + num +  "   ");
+
+                    // Draw Fraction normally
                     } else {
                         s.append(num)
                                 .append("/")
